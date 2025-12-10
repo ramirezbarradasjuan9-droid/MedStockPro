@@ -1,0 +1,5 @@
+{
+  "name": "MediStock Pro - Medicina Preventiva",
+  "description": "Sistema profesional de control de inventario para el departamento de medicina preventiva. Gestiona entradas, salidas, lotes y reportes con visualización de datos.",
+  "requestFramePermissions": []
+}
