@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import * as XLSX from 'xlsx';
-import { Search, Filter, Download, Edit2, ArrowUpCircle, ArrowDownCircle, Calendar, X } from 'lucide-react';
+import { Search, Filter, Download, Edit2, ArrowUpCircle, ArrowDownCircle, Calendar, X, AlertTriangle } from 'lucide-react';
 import { Transaction, MaterialType, TransactionType } from '../types';
 import { MATERIALS_LIST } from '../constants';
 
@@ -15,8 +15,11 @@ const Reports: React.FC<ReportsProps> = ({ transactions, onUpdateTransaction }) 
   const [filterType, setFilterType] = useState('ALL');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  
+  // Edit State
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<Transaction>>({});
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const filteredTransactions = useMemo(() => {
     return transactions.filter(t => {
@@ -76,19 +79,29 @@ const Reports: React.FC<ReportsProps> = ({ transactions, onUpdateTransaction }) 
     setEditForm({ ...t });
   };
 
-  const saveEdit = () => {
+  const initiateSave = () => {
     if (!editForm.quantity || editForm.quantity <= 0) {
       alert("Cantidad inválida");
       return;
     }
-    
+    // Show confirmation modal
+    setShowConfirmModal(true);
+  };
+
+  const executeSave = () => {
     if (editingId && editForm) {
       const original = transactions.find(t => t.id === editingId);
       if (original) {
         onUpdateTransaction({ ...original, ...editForm } as Transaction);
       }
       setEditingId(null);
+      setShowConfirmModal(false);
     }
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setShowConfirmModal(false);
   };
 
   const clearDates = () => {
@@ -97,7 +110,7 @@ const Reports: React.FC<ReportsProps> = ({ transactions, onUpdateTransaction }) 
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
       {/* Filters Bar */}
       <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-4">
         
@@ -250,8 +263,8 @@ const Reports: React.FC<ReportsProps> = ({ transactions, onUpdateTransaction }) 
                         )}
                       </td>
                       <td className="px-6 py-4">
-                         <button onClick={saveEdit} className="text-emerald-600 font-bold hover:underline mr-2">Guardar</button>
-                         <button onClick={() => setEditingId(null)} className="text-slate-400 hover:underline">Cancelar</button>
+                         <button onClick={initiateSave} className="text-emerald-600 font-bold hover:underline mr-2">Guardar</button>
+                         <button onClick={cancelEdit} className="text-slate-400 hover:underline">Cancelar</button>
                       </td>
                     </>
                   ) : (
@@ -303,6 +316,38 @@ const Reports: React.FC<ReportsProps> = ({ transactions, onUpdateTransaction }) 
           </table>
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-fade-in">
+            <div className="flex flex-col items-center text-center">
+              <div className="bg-amber-100 p-3 rounded-full text-amber-600 mb-4">
+                <AlertTriangle size={32} />
+              </div>
+              <h3 className="text-lg font-bold text-slate-800 mb-2">¿Confirmar modificaciones?</h3>
+              <p className="text-slate-500 text-sm mb-6">
+                Está a punto de actualizar un registro histórico. Esta acción afectará los reportes y el cálculo del inventario actual.
+              </p>
+              
+              <div className="flex gap-3 w-full">
+                <button 
+                  onClick={() => setShowConfirmModal(false)}
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-medium hover:bg-slate-50 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  onClick={executeSave}
+                  className="flex-1 px-4 py-2.5 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-200"
+                >
+                  Confirmar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

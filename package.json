@@ -14,7 +14,8 @@
     "uuid": "^13.0.0",
     "lucide-react": "^0.559.0",
     "recharts": "^3.5.1",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "firebase": "^12.6.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
