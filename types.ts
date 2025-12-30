@@ -1,4 +1,26 @@
-export type TransactionType = 'IN' | 'OUT';
+export interface Product {
+  id: string;
+  name: string;
+  category: string;
+  sku: string; // Código de identificación
+  quantity: number;
+  minStock: number; // Para alertas
+  unit: string; // pza, kg, lt, caja
+  updatedAt: number;
+}
+
+export interface Movement {
+  id: string;
+  productId: string;
+  productName: string;
+  type: 'IN' | 'OUT';
+  quantity: number;
+  date: string; // ISO String
+  timestamp: number;
+  notes?: string;
+}
+
+export type ViewState = 'DASHBOARD' | 'INVENTORY' | 'HISTORY';
 
 export enum MaterialType {
   VIDA_SUERO_ORAL = 'Vida Suero Oral',
@@ -11,37 +33,30 @@ export enum MaterialType {
 export enum PruebaSubtype {
   HEPATITIS_B = 'Hepatitis B',
   HEPATITIS_C = 'Hepatitis C',
-  VIH_SIFILIS = 'VIH/Sífilis',
+  VIH_SIFILIS = 'VIH / Sífilis',
   ANTIGENO_PROSTATICO = 'Antígeno Prostático',
 }
 
+export type TransactionType = 'IN' | 'OUT';
+
 export interface Transaction {
   id: string;
-  date: string; // ISO String
+  date: string;
   timestamp: number;
   type: TransactionType;
-  material: MaterialType | string;
-  subtype?: PruebaSubtype | string | null; // Nullable if not applicable
-  lot: string;
-  quantity: number;
-  origin?: string; // Only for IN
-  destination?: string; // Only for OUT
-  observations?: string;
-}
-
-export interface StockItem {
-  id: string; // Composite key usually: Material + Subtype + Lot
   material: string;
   subtype?: string | null;
   lot: string;
   quantity: number;
-  lastUpdated: string;
+  origin?: string;
+  destination?: string;
+  observations?: string;
 }
 
-export interface FilterState {
-  search: string;
+export interface StockItem {
+  id: string;
   material: string;
+  subtype?: string;
   lot: string;
-  destination: string; // For history
-  origin: string; // For history
+  quantity: number;
 }

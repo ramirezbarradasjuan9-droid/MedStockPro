@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 
+// Configuración usando tus credenciales existentes
 const firebaseConfig = {
   apiKey: "AIzaSyBlKDgNYNIv3NAfT6XFDQUDsjjpgpkrsSg",
   authDomain: "medistockpro-20e6e.firebaseapp.com",
@@ -12,7 +12,5 @@ const firebaseConfig = {
   measurementId: "G-KDXSFSR676"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 export const db = getFirestore(app);
